@@ -42,7 +42,7 @@ def notify (status){
 body: 'Jenkins Mail',
 cc: '', from: '',
 replyTo: '',
-subject: 'Jenkins Mail ',
+subject: """JenkinsNotification: ${status}:"""
 to: 'devops68@gmail.com'
 }
 
