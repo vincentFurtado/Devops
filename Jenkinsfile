@@ -1,26 +1,48 @@
-node {
+node 
+{
+    notify (' Jenkins started..')
+stage('checkout')
+{
+checkout([$class: 'GitSCM',
+branches: [[name: '*/master']],
+doGenerateSubmoduleConfigurations: false,
+extensions: [], 
+submoduleCfg: [],
+userRemoteConfigs: [[url:'https://github.com/vincentFurtado/Devops.git']]])
+}
+    notify (' Build started.. ')
+stage('maven build')
+{
 
-stage ('SCM_checkout') {
-	checkout([$class: 'GitSCM', 
-		branches: [[name: '*/master']], 
-		doGenerateSubmoduleConfigurations: false, 
-		extensions: [], 
-		submoduleCfg: [], 
-		userRemoteConfigs: [[url: 'https://github.com/ganeshhp/helloworldweb.git']]])
-	}
+sh 'mvn clean package'
+}
 
-stage ('Build') {
-	sh 'mvn clean package'
-	}
+notify (' Creating archive.. ')
 
-stage ('archive') {
-	archiveArtifacts 'target/*.war'
-	}
+stage('archive')
+{
 
-stage ('deploy') {
-	sh '''cp target/Helloworldwebapp.war /opt/apache-tomcat-8.5.21/webapps
-	/opt/apache-tomcat-8.5.21/bin/shutdown.sh
-	/opt/apache-tomcat-8.5.21/bin/startup.sh'''
-	}
+archiveArtifacts 'target/Helloworldwebapp.war'
+}
+
+notify (' Waiting for Approval ')
+input 'Deploy to Production server ? '
+stage('deploy')
+{
+
+    sh 'cp target/Helloworldwebapp.war /opt/tomcat/webapps'
+}
+notify (' Deployed..')
 
 }
+
+
+def notify (status){
+    mail bcc: '',
+body: 'Jenkins Mail',
+cc: '', from: '',
+replyTo: '',
+subject: 'Jenkins Mail ',
+to: 'devops68@gmail.com'
+}
+
