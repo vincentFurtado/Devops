@@ -36,13 +36,14 @@ notify (' Deployed..')
 
 }
 
-
-def notify (status){
-    mail bcc: '',
-body: 'Jenkins Mail',
-cc: '', from: '',
-replyTo: '',
-subject: """JenkinsNotification: ${status}:"""
-to: 'devops68@gmail.com'
-}
+def notify(status) {
+  mail (
+        body:"""${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                 Check console output at, 
+                 href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
+        cc: '', 
+        subject: """JenkinsNotification: ${status}:""", 
+        to: 'devops68@gmail.com'  
+       ) 
+ }
 
